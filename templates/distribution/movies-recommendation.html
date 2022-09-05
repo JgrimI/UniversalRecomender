@@ -1,0 +1,215 @@
+{% extends 'distribution/layout.html' %}
+
+{% block title %}Movies{% endblock %}
+
+{% block content %}
+
+<style>
+    .paginate_button {
+        background-color: white !important;
+        border-color: #FFFFFF !important;
+        color: #FFFFFF !important;
+        padding: unset !important;
+    }
+
+    #navbar .navbar-nav > li.home > a {
+        background: #da4d4d !important;
+        color: #fff !important;
+        text-decoration: none !important;
+        border-color: #ca2a2a !important;
+    }
+
+    mark {
+        padding: 0;
+        color: red;
+    }
+
+    div.dataTables_length select {
+        width: -webkit-fill-available !important;
+    }
+
+    .paginate_button:hover {
+        background-color: white !important;
+    }
+
+    .dataTables_filter {
+        text-align: center !important;
+        float: none !important;
+        margin-right: 2%;
+    }
+
+    div.dt-buttons {
+        float: right;
+    }
+
+    .products-big {
+        margin-left: 15%;
+    }
+
+    .dt-button {
+        padding: 0.5rem 0.75rem !important;
+        line-height: 1.25 !important;
+        color: #da4d4d !important;
+        background-color: #fff !important;
+        border: 1px solid #dee2e6 !important;
+    }
+</style>
+<div id="heading-breadcrumbs">
+    <div class="container">
+        <div class="row d-flex align-items-center flex-wrap">
+            <div class="col-md-7">
+                <h1 class="h2">Movies Category</h1>
+            </div>
+            <div class="col-md-5">
+                <ul class="breadcrumb d-flex justify-content-end">
+                    <li class="breadcrumb-item"><a href="{{ url_for('home') }}">Home</a></li>
+                    <li class="breadcrumb-item active">Movies Category</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="content">
+    <div class="container">
+        <div class="row bar">
+            <div class="col-md-12">
+                <p class="text-muted lead text-center">In our Movies department we offer wide selection of the best
+                    movies we have found and carefully selected worldwide.</p>
+                <div class="products-big text-center">
+                    <div class="row products">
+                        <div class="row">
+                            <div>
+                                <table id='datatable_searches' class='display dataTable' width='100%'>
+                                    <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Movie ID</th>
+                                        <th>Vote Average</th>
+                                        <th>Vote Count</th>
+                                        <th>Year</th>
+                                        <th>Recommendation Estimate</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+        getData();
+
+        //     var empDataTable = $('#datatable_searches').DataTable({
+        //         processing: true,
+        //         serverSide: true,
+        //         serverMethod: 'post',
+        //         ajax: {
+        //             url: '/moviesreco',
+        //             data: {
+        //                 id_user: "{{id_user}}",
+        //                 number_reco: "{{number_reco}}"
+        //             },
+        //             success: function (data) {
+        //
+        //                 if (data["response"] == 1) {
+        //                     sweetColorInfo('Buen Trabajo!', 'Al contacto se le ha modificado su estado', 'success');
+        //                     getDataSearch();
+        //                 } else {
+        //                     console.log(data["comment"]);
+        //                 }
+        //             },
+        //             error: function (data) {
+        //                 console.log(data);
+        //             }
+        //         },
+        //         searching: false,
+        //         sort: false,
+        //         columns: [
+        //             {data: 'title'},
+        //             {data: 'id'},
+        //             {data: 'vote_average'},
+        //             {data: 'vote_count'},
+        //             {data: 'year'},
+        //             {data: 'est'}
+        //         ]
+        //
+        //     });
+        //
+    });
+
+    function getData() {
+
+        $.ajax({
+            type: "POST",
+            url: '/moviesreco',
+            processing: true,
+            serverSide: true,
+
+            data: {
+                id_user: "{{id_user}}",
+                number_reco: "{{number_reco}}",
+                movie_name: "{{movie_name}}"
+            },
+            success: function (data) {
+                console.log('entro s');
+                console.log(data);
+                if (data["response"] === 1) {
+                    console.log(data);
+                    $('#datatable_searches').DataTable({
+                        data: data["aaData"],
+                        dom: '<Blf<t>ip>',
+                        // columnDefs: [
+                        //     {
+                        //         "targets": [5],
+                        //         "visible": false,
+                        //         "searchable": false
+                        //     }],
+                        sort: false,
+                        mark: {
+                            diacritics: true
+                        },
+                        // dom: 'Bfrtip',
+                        buttons: [
+                            {extend: 'copyHtml5', className: "page-item page-link"},
+                            'excelHtml5',
+                            'csvHtml5',
+                            'pdfHtml5'
+                        ],
+                        language: {
+                            search: "<i class='fas fa-search'></i>",
+                            searchPlaceholder: "Detailed Search",
+                        }
+                    });
+
+                } else if (data["response"] === 2) {
+                    swal({
+                        title: 'Búsquedas agotadas',
+                        text: "Ya has agotado el número de búsquedas que cubre tu plan. Para mayor información puedes contactarnos via WhatsApp",
+                        type: 'warning',
+                        confirmButtonClass: 'btn btn-success',
+                        confirmButtonText: "<a href='"+home+"'  style='color:white;'><i class='fab fa-whatsapp' " +
+                            "style='display: inline-block;margin-right: 0.7em;'></i>Aceptar</a>"
+
+
+                    });
+
+                }
+            },
+            error: function (data) {
+                console.log('entro_error');
+
+                console.log(data);
+            },
+        })
+
+    }
+
+</script>
+
+{% endblock %}

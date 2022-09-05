@@ -1,0 +1,4 @@
+.relative-positioned {
+	background: url('img/photogrid.jpg') center center repeat;
+	background-size: cover;
+}

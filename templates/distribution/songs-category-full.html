@@ -1,0 +1,201 @@
+{% extends 'distribution/layout.html' %}
+
+{% block title %}Songs{% endblock %}
+
+{% block content %}
+
+<style>
+    .paginate_button {
+        background-color: white !important;
+        border-color: #FFFFFF !important;
+        color: #FFFFFF !important;
+        padding: unset !important;
+    }
+
+    #navbar .navbar-nav > li.home > a {
+        background: #da4d4d !important;
+        color: #fff !important;
+        text-decoration: none !important;
+        border-color: #ca2a2a !important;
+    }
+
+    mark {
+        padding: 0;
+        color: red;
+    }
+
+    div.dataTables_length select {
+        width: -webkit-fill-available !important;
+    }
+
+    .paginate_button:hover {
+        background-color: white !important;
+    }
+
+    .dataTables_filter {
+        text-align: center !important;
+        float: none !important;
+        margin-right: 2%;
+    }
+
+    div.dt-buttons {
+        float: right;
+    }
+
+    .dt-button {
+        padding: 0.5rem 0.75rem !important;
+        line-height: 1.25 !important;
+        color: #da4d4d !important;
+        background-color: #fff !important;
+        border: 1px solid #dee2e6 !important;
+    }
+</style>
+<div id="heading-breadcrumbs">
+    <div class="container">
+        <div class="row d-flex align-items-center flex-wrap">
+            <div class="col-md-7">
+                <h1 class="h2">Songs Category</h1>
+            </div>
+            <div class="col-md-5">
+                <ul class="breadcrumb d-flex justify-content-end">
+                    <li class="breadcrumb-item"><a href="{{ url_for('home') }}">Home</a></li>
+                    <li class="breadcrumb-item active">Songs Category</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="content">
+    <div class="container">
+        <div class="row bar">
+            <div class="col-md-12">
+                <p class="text-muted lead text-center">In our Songs department we offer wide selection of the best
+                    songs we have found and carefully selected worldwide.</p>
+                <div class="products-big">
+                    <div class="row products">
+                        <div class="row">
+                            <div>
+                                <table id='datatable_searches' class='display dataTable' width='100%'>
+                                    <thead>
+                                    <tr>
+                                        <th>Song Name</th>
+                                        <th>Author</th>
+                                        <th>Lyrics</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="reco_modal" tabindex="-1" role="dialog" aria-labelledby="reco_modalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="POST" action="{{ url_for('songs_recommendation') }}" id="form_reco">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Get Recommendations</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" value="" id="id_user" name="id_user">
+                    <input type="hidden" value="" id="song_name" name="song_name">
+                    <input type="hidden" value="" id="author_name" name="author_name">
+                    <div class="form-group">
+                        <label for="number_reco">Number of recommendations you want to see</label>
+                        <input class="form-control edit" id="number_reco" name="number_reco">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Accept</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        var empDataTable = $('#datatable_searches').DataTable({
+            processing: true,
+            serverSide: true,
+            serverMethod: 'post',
+            ajax: {
+                'url': '/ajax_songs'
+            },
+            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+            searching: true,
+            sort: false,
+            mark: {
+                diacritics: true
+            },
+            columns: [
+                {data: 'song'},
+                {data: 'artist'},
+                {data: 'lyrics'},
+                {data: 'actions'}
+            ],
+            columnDefs: [ {
+              targets: 2,
+              render: $.fn.dataTable.render.ellipsis( 400 )
+            } ],
+            dom: '<Blf<t>ip>',
+            // dom: 'Bfrtip',
+            buttons: [
+                {extend: 'copyHtml5', className: "page-item page-link"},
+                'excelHtml5',
+                'csvHtml5',
+                'pdfHtml5'
+            ],
+            language: {
+                search: "<i class='fas fa-search'></i>",
+                searchPlaceholder: "Detailed Search",
+            }
+        });
+
+    });
+
+    function getRecommendations() {
+        $.ajax({
+            type: "POST",
+            url: "/getRecommendations",
+            data: $('#form_reco').serialize(),
+            success: function (data) {
+                console.log(data);
+                data = JSON.parse(data);
+                if (data["status"] == true) {
+                    sweetColorInfo('Buen Trabajo!', 'El contacto se ha modificado satisfactoriamente', 'success');
+                    $('#edit_modal').modal('toggle');
+                    getDataSearch();
+                } else {
+                    if (data["error"] == 1062) {
+                        sweetColorInfo('Contacto existente', 'Ya ha sido agregado un contacto con ese correo electónico', 'error');
+                    } else {
+                        console.log(data["comment"]);
+                    }
+                }
+            },
+            error: function (data) {
+                console.log(data);
+            },
+        })
+    }
+
+    function openModalReco(id, title, author) {
+        $('#id_user').val(id);
+        $('#song_name').val(title);
+        $('#author_name').val(author);
+        $('#reco_modal').modal('show');
+    }
+</script>
+
+{% endblock %}

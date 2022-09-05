@@ -1,0 +1,135 @@
+{% extends 'distribution/layout.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<style>
+
+    #navbar .navbar-nav > li.home > a {
+        background: #da4d4d !important;
+        color: #fff !important;
+        text-decoration: none !important;
+        border-color: #ca2a2a !important;
+    }
+
+
+</style>
+<section class="relative-positioned">
+    <!-- Carousel Start-->
+    <div class="home-carousel">
+        <div class="dark-mask mask-primary"></div>
+        <div class="container">
+            <div class="homepage owl-carousel">
+                <div class="item">
+                    <div class="row">
+                        <div class="col-md-5 text-right">
+                            <p><img src="{{ url_for('static', filename='img/logo.png') }}" alt="" class="ml-auto"></p>
+                            <h1>Universal Recommendations</h1>
+                            <p>Welcome to Universal Recommendations, the best place to delve into your media hobbies
+                                like  movies, songs and books, all based on your preferences.</p>
+                        </div>
+                        <div class="col-md-7"><img src="{{ url_for('static', filename='imgs/all.png') }}"
+                                                   alt="" class="img-fluid">
+                        </div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="row">
+                        <div class="col-md-7 text-center"><img
+                                src="{{ url_for('static', filename='imgs/movie.png') }}" alt="" class="img-fluid">
+                        </div>
+                        <div class="col-md-5">
+                            <h1>Movies</h1>
+                            <p>Don´t know what movie watch tonight? Let us recommend one for you</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="row">
+                        <div class="col-md-5 text-right">
+                            <h1>Songs</h1>
+                             <p>Bored of the same playlist every day? Find new songs that you will like and will help you renew your music. </p>
+                        </div>
+                        <div class="col-md-7"><img
+                                src="{{ url_for('static', filename='imgs/song.png') }}" alt=""
+                                class="img-fluid"></div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="row">
+                        <div class="col-md-7"><img src="{{ url_for('static', filename='imgs/book2.png') }}"
+                                                   alt="" class="img-fluid">
+                        </div>
+                        <div class="col-md-5">
+                            <h1>Books</h1>
+                             <p>Do you want to explore new worlds inside different books? This is your site</p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Carousel End-->
+</section>
+<section class="bar">
+    <div class="container text-center">
+        <div class="col-md-12">
+            <div class="heading text-center">
+                <h2>Our main focus</h2>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-md-6">
+                    <div class="box-simple">
+                        <div class="icon-outlined"><i class="fas fa-film"></i></div>
+                        <h3 class="h4">Movies</h3>
+                        <p>Don´t know what movie watch tonight? Let us recommend one for you</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="box-simple">
+                        <div class="icon-outlined"><i class="fas fa-music"></i></div>
+                        <h3 class="h4">Songs</h3>
+                        <p>Bored of the same playlist every day? Find new songs that you will like to renew your music. </p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="box-simple">
+                        <div class="icon-outlined"><i class="fas fa-book"></i></div>
+                        <h3 class="h4">Books</h3>
+                        <p>Do you want to explore new worlds inside different books? This is your site</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="bar background-pentagon no-mb">
+    <div class="container">
+        <div class="row showcase text-center">
+            <div class="col-md-4 col-sm-6">
+                <div class="item">
+                    <div class="icon-outlined icon-sm icon-thin"><i class="fas fa-film"></i></div>
+                    <h4><span class="h1 counter">{{movies}}</span><br>Movies</h4>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="item">
+                    <div class="icon-outlined icon-sm icon-thin"><i class="fas fa-music"></i></div>
+                    <h4><span class="h1 counter">{{songs}}</span><br>Songs</h4>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="item">
+                    <div class="icon-outlined icon-sm icon-thin"><i class="fas fa-book"></i></div>
+                    <h4><span class="h1 counter">{{books}}</span><br>Books</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="bar background-white no-mb">
+</section>
+
+{% endblock %}
